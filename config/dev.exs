@@ -2,12 +2,13 @@ import Config
 
 # Configure your database
 config :stream_chat, BattleTetris.Repo,
-  username: "postgres",
-  password: "postgres",
-  hostname: "localhost",
+  username: "root",
+  password: "root",
+  hostname: "svc.sel5.cloudtype.app",
   database: "stream_chat_dev",
   stacktrace: true,
   show_sensitive_data_on_connection_error: true,
+  port: 32395,
   pool_size: 10
 
 # For development, we disable any cache and enable
