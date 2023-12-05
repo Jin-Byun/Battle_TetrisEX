@@ -169,15 +169,14 @@ defmodule BattleTetris.Game do
 
   @impl true
   def handle_call({:obstruct, lines}, _from, game) do
-    # IO.inspect(game.board.static_blocks)
-    # if game.state == :running do
-    #   new_board = Board.obstruct(game.board)
-
-    #   send(self(), :inform_subscriber)
-    #   {:reply, :ok, %{game | board: new_board}}
-    # else
-    {:reply, :ok, game}
-    # end
+    IO.inspect(game.board.static_blocks)
+    if game.state == :running do
+      new_board = obstruct(self(), game.board)
+      send(self(), :inform_subscriber)
+      {:reply, :ok, %{game | board: new_board}}
+    else
+      {:reply, :ok, game}
+    end
   end
 
   @impl true
