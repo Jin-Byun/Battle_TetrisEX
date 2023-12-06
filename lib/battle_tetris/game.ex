@@ -41,9 +41,11 @@ defmodule BattleTetris.Game do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
-  def obstuct(pid, lines) do
+  @spec obstruct(pid(), integer()) :: :ok
+  def obstruct(pid, lines) do
     GenServer.call(pid, {:lines, lines})
   end
+
   @spec ready(pid()) :: :ok
   def ready(pid) do
     GenServer.call(pid, :ready)
@@ -203,6 +205,7 @@ defmodule BattleTetris.Game do
   @impl true
   def handle_info("obstruct", lines) do
     {_,_,game} = self().get_state()
+    IO.puts("here is 206")
     static_blocks = Board.shift_up(game.board.static_blocks)
     {:noreply, %{game | board: %{game.board | static_blocks: []}}}
   end
@@ -215,7 +218,7 @@ defmodule BattleTetris.Game do
           {new_board, lines_cleared} = Board.advance(game.board)
           lines = game.lines + lines_cleared
           tmp_lines = game.lines_use + lines_cleared
-          line_to_append = lines_cleared - 1
+          line_to_append = lines_cleared
           lines_use = rem(tmp_lines, 2)
 
           score = game.score + Score.lines_cleared(game.level, lines_cleared)
