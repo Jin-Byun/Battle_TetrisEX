@@ -41,6 +41,9 @@ defmodule BattleTetris.Game do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
+  def obstuct(pid, lines) do
+    GenServer.call(pid, {:lines, lines})
+  end
   @spec ready(pid()) :: :ok
   def ready(pid) do
     GenServer.call(pid, :ready)
@@ -105,6 +108,17 @@ defmodule BattleTetris.Game do
     else
       {:reply, :ok, game}
     end
+  end
+  def handle_call({:lines, lines}, _from, game) do
+    if game.state == :running do
+      new_board = Board.move_statics(game.board, :up)
+
+      send(self(), :inform_subscriber)
+      {:reply, :ok, %{game | board: new_board}}
+    else
+      {:reply, :ok, game}
+    end
+
   end
 
   @impl true
@@ -190,7 +204,7 @@ defmodule BattleTetris.Game do
   def handle_info("obstruct", lines) do
     {_,_,game} = self().get_state()
     static_blocks = Board.shift_up(game.board.static_blocks)
-    {:noreply, %{game | board: %{game.board | static_blocks: static_blocks}}}
+    {:noreply, %{game | board: %{game.board | static_blocks: []}}}
   end
 
 

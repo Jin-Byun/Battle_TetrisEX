@@ -22,6 +22,14 @@ defmodule BattleTetris.Block do
   end
 
   @doc """
+    It moves the block ip
+  """
+  @spec up(t()) :: t()
+  def up(%__MODULE__{parts: parts} = block) do
+    %{block | parts: Enum.map(parts, &C.up/1)}
+  end
+
+  @doc """
     It moves the block left
   """
   @spec left(t()) :: t()

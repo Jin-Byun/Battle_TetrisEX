@@ -123,6 +123,27 @@ defmodule BattleTetris.Board do
     end
   end
 
+  
+  @doc """
+    Moves the current static block to the left or to the right.
+    Does nothing if a move is blocked by static blocks or the board.
+    Does nothing if there is no falling block.
+  """
+  @spec move_statics(__MODULE__.t(), __MODULE__.direction()) :: __MODULE__.t()
+  def move_statics(board, direction) do
+    with %Block{} <- board.static_blocks,
+         new_board <- %{board | falling_block: apply(Block, direction, [board.falling_block])},
+         {:collisions, false} <- {:collisions, collisions?(new_board)} do
+      new_board
+    else
+      nil ->
+        board
+
+      {:collisions, true} ->
+        board
+    end
+  end
+
   @doc """
     Rotates the current falling block clockwise.
     Does nothing if a rotation is blocked by static blocks or the board.
