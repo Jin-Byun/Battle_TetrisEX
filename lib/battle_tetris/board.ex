@@ -187,7 +187,11 @@ defmodule BattleTetris.Board do
   end
 
   def shift_up(board) do
+    static_blocks = board.static_blocks
+    trash_blocks = Block.d({0,24})
+    static_blocks = Enum.drop(static_blocks, 10)
+    static_blocks = static_blocks ++ trash_blocks
+    %{board | static_blocks: static_blocks}
     
-    new_board
   end
 end
