@@ -131,16 +131,13 @@ defmodule BattleTetris.Board do
   """
   @spec move_statics(__MODULE__.t(), __MODULE__.direction()) :: __MODULE__.t()
   def move_statics(board, direction) do
-    IO.puts("move_static")
-    IO.inspect(direction)
-    IO.inspect(board)
-    IO.inspect(board.falling_block)
-    IO.inspect(board.static_blocks)
     with %Block{} <- board.static_blocks,
-         new_board <- %{board | static_blocks: apply(Block, :up, [board.static_blocks])} do
-          new_board
+         new_static_blocks <- Enum.map(board.static_blocks, &foreach/1),
+         new_board <- %{board | static_blocks: apply(Block, direction, [new_static_blocks])} do
+      new_board
     end
   end
+  
 
   @doc """
     Rotates the current falling block clockwise.
