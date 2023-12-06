@@ -113,8 +113,9 @@ defmodule BattleTetris.Game do
   end
   def handle_call({:lines, lines}, _from, game) do
     if game.state == :running do
+      IO.puts("herre")
       new_board = Board.move_statics(game.board, :up)
-
+      IO.inspect(new_board)
       send(self(), :inform_subscriber)
       {:reply, :ok, %{game | board: new_board}}
     else

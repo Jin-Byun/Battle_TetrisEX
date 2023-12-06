@@ -123,7 +123,7 @@ defmodule BattleTetris.Board do
     end
   end
 
-  
+
   @doc """
     Moves the current static block to the left or to the right.
     Does nothing if a move is blocked by static blocks or the board.
@@ -131,8 +131,14 @@ defmodule BattleTetris.Board do
   """
   @spec move_statics(__MODULE__.t(), __MODULE__.direction()) :: __MODULE__.t()
   def move_statics(board, direction) do
+    IO.puts("move_static")
+    IO.inspect(direction)
+    IO.inspect(board)
+    IO.inspect(board.falling_block)
+    IO.inspect(board.static_blocks)
     with %Block{} <- board.static_blocks,
-         new_board <- %{board | static_block_at: apply(Block, direction, [board.static_blocks])},
+         new_board <- %{board | static_blocks: apply(Block, :up, [board.static_blocks])} do
+          new_board
     end
   end
 
