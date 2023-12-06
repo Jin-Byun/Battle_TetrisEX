@@ -1,6 +1,5 @@
 defmodule BattleTetris.Board.Row do
   alias BattleTetris.{Board, Block}
-
   @doc """
     Checks if every column in a given row has a block in it.
   """

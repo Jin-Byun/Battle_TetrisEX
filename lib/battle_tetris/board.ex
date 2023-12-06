@@ -185,4 +185,9 @@ defmodule BattleTetris.Board do
       end
     end)
   end
+
+  def shift_up(board) do
+    
+    new_board
+  end
 end

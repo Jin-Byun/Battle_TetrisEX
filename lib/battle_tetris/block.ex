@@ -209,6 +209,7 @@ defmodule BattleTetris.Block do
     |> height
   end
 
+
   @doc """
     Removes those parts of the block that lie at the given row.
     Moves down all parts that lie above the given row.
