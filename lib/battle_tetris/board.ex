@@ -133,6 +133,7 @@ defmodule BattleTetris.Board do
   def move_statics(board, direction) do
     with %Block{} <- board.static_blocks,
          new_static_blocks <- Enum.map(board.static_blocks, &foreach/1),
+         new_static_blocks <- new_static_blocks ++ Block.d({0,24})
          new_board <- %{board | static_blocks: apply(Block, direction, [new_static_blocks])} do
       new_board
     end
