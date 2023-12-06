@@ -132,15 +132,7 @@ defmodule BattleTetris.Board do
   @spec move_statics(__MODULE__.t(), __MODULE__.direction()) :: __MODULE__.t()
   def move_statics(board, direction) do
     with %Block{} <- board.static_blocks,
-         new_board <- %{board | falling_block: apply(Block, direction, [board.falling_block])},
-         {:collisions, false} <- {:collisions, collisions?(new_board)} do
-      new_board
-    else
-      nil ->
-        board
-
-      {:collisions, true} ->
-        board
+         new_board <- %{board | static_block_at: apply(Block, direction, [board.static_blocks])},
     end
   end
 
@@ -205,14 +197,5 @@ defmodule BattleTetris.Board do
         acc
       end
     end)
-  end
-
-  def shift_up(board) do
-    static_blocks = board.static_blocks
-    trash_blocks = Block.d({0,24})
-    static_blocks = Enum.drop(static_blocks, 10)
-    static_blocks = static_blocks ++ trash_blocks
-    %{board | static_blocks: static_blocks}
-    
   end
 end

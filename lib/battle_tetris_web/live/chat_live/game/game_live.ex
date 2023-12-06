@@ -179,7 +179,6 @@ defmodule BattleTetrisWeb.ChatLive.GameLive do
   def update(%{lines: lines}, socket) do
     Game.obstruct(socket.assign.game, lines)
   end
-  end
   @impl true
   def update(%{game_state: game}, %{assigns: assigns} = socket) do
     if assigns.is_self do
