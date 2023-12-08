@@ -130,17 +130,19 @@ defmodule BattleTetris.Board do
   """
   @spec move_statics(__MODULE__.t(), __MODULE__.direction()) :: __MODULE__.t()
   def move_statics(board, direction) do
-    with %Block{} <- board.static_blocks,
-        new_static_blocks <- move_blocks_up(board.static_blocks),
-        new_static_blocks <- new_static_blocks ++ [Block.d({0,24})],
-        new_board <- %{board | static_blocks: new_static_blocks} do
-      new_board
-    end
+    IO.inspect(board.static_blocks)
+    new_static_blocks = move_blocks_up(board.static_blocks)
+    IO.puts("after")
+    IO.inspect(new_static_blocks)
+    %{
+      board
+      | static_blocks: [Block.d() | new_static_blocks]
+    }
   end
 
   # Helper function to move each block in the list up
   defp move_blocks_up(static_blocks) do
-    Enum.map(static_blocks, &Block.move(&1, :up))
+    Enum.map(static_blocks, &Block.up(&1))
   end
 
 
