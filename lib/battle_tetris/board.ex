@@ -124,6 +124,29 @@ defmodule BattleTetris.Board do
   end
 
   @doc """
+  Moves the current static block to the left or to the right.
+  Does nothing if a move is blocked by static blocks or the board.
+  Does nothing if there is no falling block.
+  """
+  @spec move_statics(__MODULE__.t(), __MODULE__.direction()) :: __MODULE__.t()
+  def move_statics(board, direction) do
+    IO.inspect(board.static_blocks)
+    new_static_blocks = move_blocks_up(board.static_blocks)
+    IO.puts("after")
+    IO.inspect(new_static_blocks)
+    %{
+      board
+      | static_blocks: [Block.d() | new_static_blocks]
+    }
+  end
+
+  # Helper function to move each block in the list up
+  defp move_blocks_up(static_blocks) do
+    Enum.map(static_blocks, &Block.up(&1))
+  end
+
+
+  @doc """
     Rotates the current falling block clockwise.
     Does nothing if a rotation is blocked by static blocks or the board.
     Does nothing if there is no falling block.
