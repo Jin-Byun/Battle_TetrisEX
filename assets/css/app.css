@@ -72,6 +72,7 @@ kbd {
 /* game general style */
 
 .game {
+    height: 100%;
     outline: 1px solid var(--wine);
     margin-block: 30px;
     margin-right: 10px;
@@ -104,6 +105,7 @@ kbd {
     background-size: contain;
 
     &:not(.block-part--nil) {
+        border: 1px solid rgba(255, 255, 255, 0.5);
         box-shadow: inset 1px 1px 1px rgba(white, 0.5), inset -1px -1px 1px rgba(black, 0.5);
     }
 }
@@ -267,4 +269,18 @@ kbd {
     grid-row: 6;
     grid-column-start: 2;
     grid-column-end: 5;
+}
+
+.board-row.cleared {
+    animation: line-clear-animation 0.5s ease-out;
+}
+
+@keyframes line-clear-animation {
+    from {
+        background-color: yellow; /* Initial background color before clearing */
+    }
+
+    to {
+        background-color: transparent; /* Final background color after clearing */
+    }
 }
