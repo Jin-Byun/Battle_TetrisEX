@@ -22,6 +22,16 @@ defmodule BattleTetris.Block do
   end
 
   @doc """
+    It moves the block up
+  """
+  @spec up([t()]) :: [t()]
+  def up([%__MODULE__{parts: parts}] = block) do
+    IO.puts("block")
+    IO.inspect(block)
+    %{block | parts: Enum.map(parts, &C.up/1)}
+  end
+
+  @doc """
     It moves the block left
   """
   @spec left(t()) :: t()
@@ -155,20 +165,24 @@ defmodule BattleTetris.Block do
   @doc """
     Creates a new block of type D (obstruct)
   """
-  @spec d(C.t()) :: t()
-  def d(top_left \\ {0, 0}) do
+  @spec d() :: t()
+  def d() do
+    part_tmp = [
+      {0, 23},
+      {1, 23},
+      {2, 23},
+      {3, 23},
+      {4, 23},
+      {5, 23},
+      {6, 23},
+      {7, 23},
+      {8, 23},
+      {9, 23}
+    ]
+    n = :rand.uniform(10) - 1
+    newPart = Enum.reject(part_tmp, &(&1 == {n, 23}))
     %__MODULE__{
-      parts: [
-        top_left,
-        top_left |> C.right(1),
-        top_left |> C.right(2),
-        top_left |> C.right(3),
-        top_left |> C.right(5),
-        top_left |> C.right(6),
-        top_left |> C.right(7),
-        top_left |> C.right(8),
-        top_left |> C.right(9),
-      ],
+      parts: newPart,
       type: :d
     }
   end
@@ -208,6 +222,7 @@ defmodule BattleTetris.Block do
     |> apply(block_type, [{0, 0}])
     |> height
   end
+
 
   @doc """
     Removes those parts of the block that lie at the given row.

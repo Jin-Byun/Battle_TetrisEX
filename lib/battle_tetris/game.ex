@@ -3,7 +3,7 @@ defmodule BattleTetris.Game do
 
   require Logger
 
-  alias BattleTetris.{Board, BlockQueue, Score}
+  alias BattleTetris.{Board, BlockQueue, Score, Row}
   alias BattleTetrisWeb.Endpoint
 
   defstruct board: nil,
@@ -41,6 +41,11 @@ defmodule BattleTetris.Game do
     GenServer.start_link(__MODULE__, :ok, opts)
   end
 
+  @spec obstruct(pid(), integer()) :: :ok
+  def obstruct(pid, lines) do
+    GenServer.call(pid, {:lines, lines})
+  end
+
   @spec ready(pid()) :: :ok
   def ready(pid) do
     GenServer.call(pid, :ready)
@@ -64,11 +69,6 @@ defmodule BattleTetris.Game do
   @spec move(pid(), Board.direction()) :: :ok
   def move(pid, direction) do
     GenServer.call(pid, {:move, direction})
-  end
-
-  @spec obstruct(pid(), integer()) :: :ok
-  def obstruct(pid, line_count) do
-    GenServer.call(pid, {:obstruct, line_count})
   end
 
   @spec rotate(pid()) :: :ok
@@ -99,19 +99,6 @@ defmodule BattleTetris.Game do
     {:ok, new_game()}
   end
 
-  # @impl true
-  # def handle_call(:ready, {from_pid, _from_ref}, game) do
-  #   if game.state == :new do
-  #     game = start_game(game, from_pid)
-  #     send(self(), :inform_subscriber)
-  #     :timer.send_after(@tick, self(), :tick)
-
-  #     {:reply, :ok, game}
-  #   else
-  #     {:reply, :ok, game}
-  #   end
-  # end
-
   @impl true
   def handle_call(:start, {from_pid, _from_ref}, game) do
     if game.state == :new do
@@ -123,6 +110,18 @@ defmodule BattleTetris.Game do
     else
       {:reply, :ok, game}
     end
+  end
+  def handle_call({:lines, lines}, _from, game) do
+    if game.state == :running do
+      IO.puts("herre")
+      new_board = Board.move_statics(game.board, :up)
+      IO.inspect(new_board)
+      send(self(), :inform_subscriber)
+      {:reply, :ok, %{game | board: new_board}}
+    else
+      {:reply, :ok, game}
+    end
+
   end
 
   @impl true
@@ -168,19 +167,6 @@ defmodule BattleTetris.Game do
   end
 
   @impl true
-  def handle_call({:obstruct, lines}, _from, game) do
-    # IO.inspect(game.board.static_blocks)
-    # if game.state == :running do
-    #   new_board = Board.obstruct(game.board)
-
-    #   send(self(), :inform_subscriber)
-    #   {:reply, :ok, %{game | board: new_board}}
-    # else
-    {:reply, :ok, game}
-    # end
-  end
-
-  @impl true
   def handle_call(:fast_mode_on, _from, game) do
     game = %{game | tick_frequency: fast_tick_frequency()}
     {:reply, :ok, game}
@@ -218,10 +204,13 @@ defmodule BattleTetris.Game do
   end
 
   @impl true
-  def handle_info(message, game) do
-    Logger.warning("Unexpected message: #{inspect(message)}")
-    {:noreply, game}
+  def handle_info("obstruct", lines) do
+    {_,_,game} = self().get_state()
+    IO.puts("here is 206")
+    static_blocks = Board.shift_up(game.board.static_blocks)
+    {:noreply, %{game | board: %{game.board | static_blocks: []}}}
   end
+
 
   defp do_advance(game) do
     if game.state == :running do
@@ -230,7 +219,7 @@ defmodule BattleTetris.Game do
           {new_board, lines_cleared} = Board.advance(game.board)
           lines = game.lines + lines_cleared
           tmp_lines = game.lines_use + lines_cleared
-          line_to_append = div(tmp_lines, 2)
+          line_to_append = lines_cleared
           lines_use = rem(tmp_lines, 2)
 
           score = game.score + Score.lines_cleared(game.level, lines_cleared)

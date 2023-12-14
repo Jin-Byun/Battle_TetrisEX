@@ -99,12 +99,13 @@ defmodule BattleTetrisWeb.ChatLive.Root do
   end
 
   def handle_info(
-      %{event: "obstruct", payload: %{lines: lines, sender_id: sender_id}},
+      %{event: "obstruct", payload: payload},
       %{assigns: %{current_user: current_user}} = socket
     ) do
+    sender_id = payload.sender_id
     uid = current_user.id
     if sender_id != uid do
-      send_update(GameLive, id: "game-#{uid}", lines: lines)
+      send_update(GameLive, id: "game-#{uid}", lines: payload.lines)
     end
     {:noreply, socket}
   end
